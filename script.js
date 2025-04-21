@@ -34,46 +34,38 @@ function handleStepEnter(response) {
     return i === response.index;
   });
 
-  // OPTIONAL: update a step index display if you have a <p> inside figure
-  // figure.select("p").text(response.index + 1);
-
-  // // Switch images based on the scroll step
-  // if (response.index === 0) {
-  // 	swapImages("images/02-hurricane-scale.svg");
-  // } else if (response.index === 1) {
-  // 	swapImages("images/03-reacecar.svg");
-  // } else if (response.index === 2) {
-  // 	swapImages("storm-surge.svg");
-  // } else if (response.index === 3) {
-  // 	swapImages("hurricane-scale.svg");
-  // }
-
-
+  // Hide image wrapper for fullscreen image step
   if (response.index === 5) {
-	figure.style("opacity", 0);
+    figure.style("opacity", 0);
   } else {
-	figure.style("opacity", 1);
+    figure.style("opacity", 1);
   }
-  
 
-  // Switch images based on the scroll step
-  //console.log("Current step index:", response.index);
+  // Swap images
   if (response.index === 0) {
     swapImages("images/01-globe.svg");
   } else if (response.index === 1) {
-	swapImages("images/02-hurricane-scale.svg");
+    swapImages("images/02-hurricane-scale.svg");
   } else if (response.index === 2) {
     swapImages("images/03-reacecar.svg");
   } else if (response.index === 3) {
     swapImages("images/04-jet.svg");
   } else if (response.index === 4) {
     swapImages("images/05-surge.svg");
-	} else if (response.index === 6) {
+  } else if (response.index === 6) {
     swapImages("images/06-1970-deaths.svg");
+  }
 
-
+  // Change body background color after step 5
+  if (response.index >= 6) {
+    document.body.style.backgroundColor = "black";
+    document.body.style.color = "white";
+  } else {
+    document.body.style.backgroundColor = "white";
+    document.body.style.color = "black";
   }
 }
+
 
 // 3. Resize handler
 function handleResize() {

@@ -20,16 +20,6 @@
     display: flex;
 }
 
-#scroll-02 {
-    padding-top:5rem;
-    position: relative;
-    /* border-top: 2px dashed #000; */
-    /* border-bottom: 2px dashed #000; */
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-}
-
 
 
 
@@ -378,23 +368,21 @@ article {
 }
 
 .step.fullscreen-image {
+	z-index: 10;
+	position: relative;
 	width: 100vw !important;
 	height: 100vh !important;
 	max-width: none !important;
 	min-height: 100vh !important;
-	padding: 0 !important;
 	margin: 0 !important;
+	padding: 0 !important;
 	background-color: black;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	position: relative;
 	overflow: hidden;
-	margin: 0 !important;
-	padding: 0 !important;
-	z-index: 2;
-	position: relative;
   }
+  
   
   .step.fullscreen-image img {
 	width: 100%;
@@ -404,7 +392,73 @@ article {
   }
 
   .spacer {
-	height: 20vh;
+	height: 10vh;
 	background: transparent;
   }
+  
+  .step[data-step="4"] {
+	position: relative;
+	z-index: 1;
+  }
+
+  .step[data-step="4"].is-active ~ .step.fullscreen-image {
+	opacity: 1;
+  }
+  
+  .step.fullscreen-image {
+	opacity: 0.3;
+	transition: opacity 0.4s ease;
+  }
+  .step.fullscreen-image.is-active {
+	opacity: 1;
+  }
+  
+  .fullscreen-block {
+	position: relative;
+	z-index: 10;
+  }
+  
+  .fullscreen-block .step.fullscreen-image {
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 0;
+	padding: 0;
+	background-color: black;
+	z-index: 10;
+	position: relative;
+	overflow: hidden;
+  }
+  
+  .fullscreen-block .step.fullscreen-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+  }
+  
+  .fullscreen-block .step[data-step="6"] {
+	position: relative;
+	z-index: 5;
+	background-color: white; /* or your default */
+  }
+
+  /* When Step 5 is active, hide Step 4 */
+.step.fullscreen-image.is-active ~ .step[data-step="4"] {
+	display: none;
+  }
+  
+  .dark-step {
+	background-color: black;
+	color: white;
+  }
+
+  .dark-background-section {
+	background-color: black;
+	color: white;
+	padding: 4rem 0;
+  }
+  
+  
   
