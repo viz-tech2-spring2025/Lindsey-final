@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tropical Cyclones - Scrolltelling</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/scrollama"></script>
+    <style>
+        /* Base styles */
+        body {
+            font-family: sans-serif;
+            background-color: black;
+            color: white;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Introduction section */
+        #intro {
+            max-width: 40rem;
+            margin: 2rem auto;
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+
+        .intro__hed {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .intro__dek {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+        }
+
+        .intro_description {
+            display: flex;
+            gap: 2rem;
+            max-width: 800px;
+            margin: 2rem auto;
+            text-align: left;
+        }
+
+        .intro_description .column {
+            width: 50%;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Scrolly sections */
+        #scrolly,
+        #scrolly2 {
+            position: relative;
+            display: flex;
+            background-color: black;
+            padding: 1rem;
+        }
+
+        #scrolly>*,
+        #scrolly2>* {
+            flex: 1;
+        }
+
+        /* Article and figure styles */
+        article {
+            position: relative;
+            padding: 0 1rem;
+            max-width: 20rem;
+        }
+
+        figure {
+            position: sticky;
+            width: 100%;
+            margin: 0;
+            transform: translate3d(0, 0, 0);
+            background-color: black;
+            z-index: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            padding-top: 1rem;
+        }
+
+        /* White background for first scrolly figure */
+        #scrolly figure {
+            background-color: white;
+        }
+
+        /* Step styles */
+        .step {
+            margin: 0 auto 2rem auto;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step.is-active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .step p {
+            text-align: left;
+            padding: 1rem;
+            font-size: 1rem;
+        }
+
+        .step h2,
+        .step h3 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Step content visibility */
+        .step-content {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        /* Chart styles */
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0;
+        }
+
+        .controls-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0;
+            width: 100%;
+            justify-content: center;
+            padding-bottom: 1rem;
+        }
+
+        .button-container {
+            width: 600px;
+            margin: 0;
+            position: relative;
+        }
+
+        .legend-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Year button styles */
+        .year-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            border: 2px solid white;
+            background-color: white;
+            color: black;
+            font-weight: bold;
+            text-align: center;
+            margin: 0 10px;
+            cursor: pointer;
+            top: -14px;
+            position: relative;
+            font-size: 12px;
+        }
+
+        .year-button.selected {
+            background-color: transparent;
+            color: white;
+        }
+
+        /* Storm surge section */
+        .storm-surge-section {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            background-color: black;
+        }
+
+        .storm-surge-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .storm-surge-caption {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        /* Tooltip styles */
+        .tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+            pointer-events: none;
+            border-radius: 6px;
+            z-index: 9999;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            min-width: 200px;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+        }
+
+        /* SVG styles */
+        svg {
+            background-color: black;
+        }
+
+        .tick-line {
+            stroke: #666;
+            stroke-width: 1px;
+            stroke-dasharray: 4;
+        }
+
+        .circle-solid {
+            fill: red;
+            opacity: 0.6;
+            cursor: pointer;
+        }
+
+        .circle-outline {
+            fill: none;
+            stroke: red;
+            stroke-width: 1.5px;
+            cursor: pointer;
+        }
+
+        .month-label,
+        .y-label {
+            fill: white;
+            font-size: 12px;
+        }
+
+        .legend {
+            font-size: 14px;
+            fill: white;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <!-- Introduction section -->
+        <section id="intro-wrapper">
+            <section id="intro">
+                <h1 class="intro__hed">Stormscapes</h1>
+                <h2 class="intro__dek">
+                    A Century<span class="red-plus">+</span> of Cyclones
+                </h2>
+                <div class="intro_description">
+                    <div class="column">
+                        Tropical cyclones are among the most powerful and destructive forces on Earth. Forming over warm
+                        ocean
+                        waters, these storms—known as hurricanes, typhoons, or cyclones depending on the region—bring
+                        intense
+                        winds, torrential rains, and devastating storm surges. Over the past century, their frequency
+                        and
+                        intensity have been rising, leaving a lasting impact on coastal communities worldwide.
+                    </div>
+                    <div class="column">
+                        This project explores the evolving story of tropical cyclones: how their activity has increased
+                        over
+                        time, how they affect people across the globe, and how communities respond in the face of
+                        disaster.
+                        Use
+                        the following visualizations to explore the history of these devastating storms and the
+                        resilience
+                        that
+                        emerges in their aftermath.
+                    </div>
+                </div>
+            </section>
+            <div class="full-bleed-image-container">
+                <img src="space_hurricane.jpg" alt="Space view of hurricane" class="full-bleed-image" />
+                <div class="image-caption">NASA/Goddard Space Flight Center – Hurricane Florence from the ISS, 9/12
+                </div>
+            </div>
+
+        </section>
+
+        <!-- First scrolly section - handles intro and fullscreen image -->
+        <section id="scrolly">
+            <article>
+                <!-- 
+                    HOW TO ADD NEW STEPS TO FIRST SECTION:
+                    1. Add a new div with class "step" and data-step attribute
+                    2. The data-step value should be sequential (0, 1, 2, etc.)
+                    3. Include h3 for title and p for content
+                    4. Example:
+                    <div class="step" data-step="X">
+                        <h3>Your Title</h3>
+                        <p>Your content here</p>
+                    </div>
+                -->
+                <!-- Step 1: Introduction -->
+                <div class="step" data-step="0">
+                    <h3>What is a hurricane?</h3>
+                    <p>What you call a hurricane way depend on where you are in the world. Here in the Atlantic Basin,
+                        along
+                        with folks in the Northeastern Pacific Basin, we call them 'Hurricanes'. But, if we were
+                        anywhere in
+                        the Indian Basins or the Australian/Southwest Pacific basin we would call them 'Cyclones'.
+                        Finally,
+                        the term 'Typhoon' is reserved for those who live in the Northwest Pacific Basin.</p>
+                </div>
+
+                <div class="step" data-step="1">
+                    <h3>That's some strong wind!</h3>
+                    <p>The Saffir-Simpson Hurricane Wind Scale is a 1 to 5 rating system based on a hurricane's
+                        sustained
+                        wind speed, used to estimate potential property damage and flooding, with Category 3 and higher
+                        storms considered major hurricanes. </p>
+                </div>
+
+                <div class="step" data-step="2">
+                    <h3>Great Cyclone of 1970</h3>
+                    <h4>Cat 4 <br>130 mph</h4>
+                    <p>The storm originated from a tropical depression that formed in the southern Bay of Bengal. From
+                        ship
+                        reports, the IMD it was estimated that the maximum sustained winds were near 130 mph (205
+                        km/hr).
+                    </p>
+                </div>
+
+                <div class="step" data-step="3">
+                    <h3>Katrina (2005)</h3>
+                    <h4>Cat 5 <br>175 mph</h4>
+                    <p>After attaining Category 5 hurricane status on the morning of August 28, Katrina reached its peak
+                        strength at 1800 UTC, with maximum sustained winds of 175 mph (280 km/h).</p>
+                </div>
+
+                <div class="step" data-step="4">
+                    <h3>Storm Surge</h3>
+                    <p>Storm surge is an abnormal water level rise generated by a storm over and above the predicted
+                        astronomical tide. Storm tide is the water level rise due to the combination of storm surge and
+                        the
+                        astronomical tide.</p>
+                    <p>Storm surge during Hurricane Katrina (2005) reached 25 to 28 feet along the Mississippi Coast,
+                        one of
+                        the highest storm surges ever recorded in the US.</p>
+                </div>
+            </article>
+            <figure>
+                <!-- 
+                    HOW TO ADD NEW FIGURES TO FIRST SECTION:
+                    1. Add a new div with class "step-content intro-content" and data-step attribute
+                    2. The data-step value should match the corresponding step number + 1
+                    3. Include your image or content inside the div
+                    4. Example:
+                    <div class="step-content intro-content" data-step="X">
+                        <img src="path/to/your/image.svg" alt="Description" />
+                    </div>
+                -->
+                <div class="step-content intro-content" data-step="1">
+                    <img src="images/01-globe.svg" alt="" />
+                </div>
+                <div class="step-content intro-content" data-step="2">
+                    <img src="images/02-hurricane-scale.svg" alt="" />
+                </div>
+                <div class="step-content intro-content" data-step="3">
+                    <img src="images/03-reacecar.svg" alt="" />
+                </div>
+                <div class="step-content intro-content" data-step="4">
+                    <img src="images/04-jet.svg" alt="" />
+                </div>
+            </figure>
+        </section>
+
+        <!-- Storm surge section -->
+        <section class="storm-surge-section">
+            <img src="Hurricane-Ida-Storm-Surge6_cred-Stacey-Cato.webp" alt="Hurricane Ida Storm Surge" />
+            <div class="storm-surge-caption">Hurricane Ida Storm Surge - Credit: Stacey Cato</div>
+        </section>
+
+        <!-- Second scrolly section - handles steps after the full image -->
+        <section id="scrolly2">
+            <article>
+                <!-- 
+                    HOW TO ADD NEW STEPS TO SECOND SECTION:
+                    1. Add a new div with class "step" and data-step attribute
+                    2. The data-step value should continue from the first section (6, 7, etc.)
+                    3. Include h2 for title and p for content
+                    4. Example:
+                    <div class="step" data-step="X">
+                        <h2>Your Title</h2>
+                        <p>Your content here</p>
+                    </div>
+                -->
+                <!-- Step 3: Historical Trends -->
+                <div class="step" data-step="6">
+                    <h2>Historical Trends</h2>
+                    <p>Use the year buttons to explore how cyclone patterns have changed over time. Notice any shifts in
+                        frequency or intensity.</p>
+                </div>
+                <!-- Step 4: Seasonal Patterns -->
+                <div class="step" data-step="7">
+                    <h2>Seasonal Patterns</h2>
+                    <p>The monthly distribution of cyclones reveals distinct seasonal patterns in different regions.
+                        Some areas have clear cyclone seasons, while others experience them year-round.</p>
+                </div>
+                <div class="step" data-step="8">
+                    <h2>Seasonal Patterns</h2>
+                    <p>The monthly distribution of cyclones reveals distinct seasonal patterns in different regions.
+                        Some areas have clear cyclone seasons, while others experience them year-round.</p>
+                </div>
+            </article>
+
+            <figure>
+                <!-- 
+                    HOW TO ADD NEW FIGURES TO SECOND SECTION:
+                    1. Add a new div with class "step-content" and appropriate content class
+                    2. The data-step value should match the corresponding step number
+                    3. Include your visualization or content inside the div
+                    4. Example for chart:
+                    <div class="step-content chart-content" data-step="X">
+                        <div class="chart-container">
+                            <svg id="your-chart" width="800" height="500"></svg>
+                        </div>
+                    </div>
+                -->
+                <!-- Step content for step 6 -->
+                <div class="step-content timeline-content" data-step="6">
+
+                </div>
+                <!-- Chart visualization with controls -->
+                <div class="step-content chart-content" data-step="7">
+                    <div class="chart-container">
+                        <svg id="chart" width="800" height="500"></svg>
+                        <div class="controls-container">
+                            <div class="button-container">
+                                <svg id="button-lines" width="500" height="60"></svg>
+                                <div class="button-group" id="buttons"
+                                    style="display: flex; justify-content: center; gap: 10px; margin-left:-50px; margin-top: -80px;">
+                                </div>
+                            </div>
+                            <div class="legend-container">
+                                <svg id="legend" width="350" height="200"></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </figure>
+        </section>
+    </main>
+
+    <script>
+        // using d3 for convenience
+        const main = d3.select("main");
+        const scrolly = main.select("#scrolly");
+        const scrolly2 = main.select("#scrolly2");
+        const figure = scrolly.select("figure");
+        const figure2 = scrolly2.select("figure");
+        const article = scrolly.select("article");
+        const article2 = scrolly2.select("article");
+        const step = article.selectAll(".step");
+        const step2 = article2.selectAll(".step");
+
+        /*
+            STEP INDEX DEPENDENCIES:
+            
+            First Section (scrolly):
+            - Steps 0-4: Regular content steps
+            - Each step's figure is shown when its index + 1 matches the data-step
+            
+            Second Section (scrolly2):
+            - Steps 6-8: Regular content steps
+            - Step 6: Timeline content
+            - Step 7: Chart content (initializes chart on first entry)
+            
+            When adding new steps:
+            1. For first section: Add steps with indices 0,1,2,etc.
+            2. For second section: Add steps with indices 6,7,8,etc.
+            3. Update handleStepEnter and handleStepEnter2 functions if adding interactive content
+        */
+
+        // Chart configuration settings
+        const margin = { top: 20, right: 30, bottom: 40, left: 230 };
+        const width = 800 - margin.left - margin.right;
+        const height = 500 - margin.top - margin.bottom;
+
+        // Circle size configuration
+        const scaleFactor = 5;
+        const rMin = 3 * scaleFactor;
+        const rMax = 25 * scaleFactor;
+        const rFixed = 10;
+
+        // Data filtering configuration
+        const subregionFilter = new Set([
+            "Latin America and the Caribbean",
+            "Southeastern Asia",
+            "Eastern Asia",
+            "Southern Asia",
+            "Sub-Saharan Africa",
+            "Northern America",
+            "Melanesia"
+        ]);
+
+        // Month labels
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        // Initialize SVG for chart
+        const svg = d3.select("#chart")
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Initialize scrollama instances for both sections
+        const scroller = scrollama();
+        const scroller2 = scrollama();
+
+        // Load data and initialize visualization
+        d3.csv("tropical_cyclones_filtered.csv", d3.autoType).then(data => {
+            // Filter data for selected regions
+            data = data.filter(d => subregionFilter.has(d["Subregion"]));
+            const yearsToShow = [1900, 1940, 1960, 1980, 2000, 2020];
+            const dataByYear = d3.group(data, d => d["Start Year"]);
+            const validYears = yearsToShow.filter(y => dataByYear.has(y));
+            const allSubregions = Array.from(subregionFilter);
+
+            // Create scales for chart
+            const x = d3.scaleLinear().domain([1, 12]).range([0, width]);
+            const y = d3.scaleBand().domain(allSubregions).range([0, height]).padding(0.3);
+
+            // Scale for circle sizes based on affected population
+            const rScale = d3.scaleSqrt()
+                .domain([0, d3.max(data, d => d["Total Affected"] || 1000)])
+                .range([rMin, rMax]);
+
+            // Create grid lines and labels
+            svg.selectAll(".tick-line")
+                .data(d3.range(1, 13))
+                .join("line")
+                .attr("class", "tick-line")
+                .attr("x1", d => x(d))
+                .attr("x2", d => x(d))
+                .attr("y1", 0)
+                .attr("y2", height);
+
+            // Add month labels
+            svg.selectAll(".month-label")
+                .data(d3.range(1, 13))
+                .join("text")
+                .attr("class", "month-label")
+                .attr("x", d => x(d))
+                .attr("y", height + 15)
+                .attr("text-anchor", "middle")
+                .text(d => monthNames[d - 1]);
+
+            // Add region labels
+            svg.selectAll(".y-label")
+                .data(allSubregions)
+                .join("text")
+                .attr("class", "y-label")
+                .attr("x", -40)
+                .attr("y", d => y(d) + y.bandwidth() / 2)
+                .attr("text-anchor", "end")
+                .attr("alignment-baseline", "middle")
+                .text(d => d);
+
+            // Create legend
+            const rScaleLegend = d3.scaleSqrt()
+                .domain([1000, 1000000])
+                .range([10, 60]);
+            const legendSvg = d3.select("#legend");
+            const legendVals = [10000, 100000, 500000, 1000000];
+            const xCircle = 80;
+            const xLabel = 160;
+            const yCircle = 200;
+
+            // Add legend title
+            legendSvg.append("text")
+                .attr("x", 10)
+                .attr("y", 40)
+                .style("fill", "white")
+                .style("font-size", "18px")
+                .text("Total Affected");
+
+            // Add legend circles
+            legendSvg.selectAll("legend-circle")
+                .data(legendVals)
+                .enter()
+                .append("circle")
+                .attr("cx", xCircle)
+                .attr("cy", d => yCircle - rScaleLegend(d))
+                .attr("r", d => rScaleLegend(d))
+                .style("fill", "none")
+                .attr("stroke", "red");
+
+            // Add legend lines
+            legendSvg.selectAll("legend-line")
+                .data(legendVals)
+                .enter()
+                .append("line")
+                .attr("x1", d => xCircle + rScaleLegend(d))
+                .attr("x2", xLabel)
+                .attr("y1", d => yCircle - rScaleLegend(d))
+                .attr("y2", d => yCircle - rScaleLegend(d))
+                .attr("stroke", "white")
+                .style("stroke-dasharray", ("2,2"));
+
+            // Add legend labels
+            legendSvg.selectAll("legend-text")
+                .data(legendVals)
+                .enter()
+                .append("text")
+                .attr("x", xLabel + 5)
+                .attr("y", d => yCircle - rScaleLegend(d))
+                .text(d => `${d / 1000}k`)
+                .style("fill", "white")
+                .style("font-size", "12px")
+                .attr("alignment-baseline", "middle");
+
+            // Create year buttons
+            const buttonGroup = d3.select("#buttons");
+            validYears.forEach((year, i) => {
+                const btn = buttonGroup.append("button")
+                    .attr("class", "year-button")
+                    .text(year)
+                    .on("click", () => {
+                        d3.selectAll(".year-button").classed("selected", false);
+                        btn.classed("selected", true);
+                        update(year);
+                    });
+            });
+
+            // Update chart with selected year's data
+            function update(year) {
+                const yearData = dataByYear.get(year) || [];
+
+                // Update solid circles
+                const fixed = svg.selectAll(".circle-solid")
+                    .data(yearData, (d, i) => d["Subregion"] + d["Start Month"] + i);
+
+                fixed.join(
+                    enter => enter.append("circle")
+                        .attr("class", "circle-solid")
+                        .attr("cx", d => x(d["Start Month"]))
+                        .attr("cy", d => y(d["Subregion"]) + y.bandwidth() / 2)
+                        .attr("r", rFixed)
+                        .on("mouseover", (event, d) => {
+                            const tooltip = d3.select("#tooltip");
+                            const [x, y] = d3.pointer(event);
+                            tooltip
+                                .html(`
+                                    <div style="font-weight: bold; margin-bottom: 5px;">${d["Subregion"]}</div>
+                                    <div>Month: ${monthNames[d["Start Month"] - 1]}</div>
+                                    <div>Total Affected: ${d["Total Affected"] || "N/A"}</div>
+                                `)
+                                .style("left", `${event.pageX + 15}px`)
+                                .style("top", `${event.pageY - 15}px`)
+                                .classed("visible", true);
+                        })
+                        .on("mousemove", (event) => {
+                            d3.select("#tooltip")
+                                .style("left", `${event.pageX + 15}px`)
+                                .style("top", `${event.pageY - 15}px`);
+                        })
+                        .on("mouseout", () => {
+                            d3.select("#tooltip").classed("visible", false);
+                        }),
+                    update => update
+                        .transition().duration(500)
+                        .attr("cx", d => x(d["Start Month"]))
+                        .attr("cy", d => y(d["Subregion"]) + y.bandwidth() / 2),
+                    exit => exit.remove()
+                );
+
+                // Update outlined circles
+                const outline = svg.selectAll(".circle-outline")
+                    .data(yearData.filter(d => d["Total Affected"] != null), d => d["Subregion"] + d["Start Month"]);
+
+                outline.join(
+                    enter => enter.append("circle")
+                        .attr("class", "circle-outline")
+                        .attr("cx", d => x(d["Start Month"]))
+                        .attr("cy", d => y(d["Subregion"]) + y.bandwidth() / 2)
+                        .attr("r", d => rScale(d["Total Affected"]))
+                        .on("mouseover", (event, d) => {
+                            const tooltip = d3.select("#tooltip");
+                            tooltip
+                                .html(`
+                                    <div style="font-weight: bold; margin-bottom: 5px;">${d["Subregion"]}</div>
+                                    <div>Month: ${monthNames[d["Start Month"] - 1]}</div>
+                                    <div>Total Affected: ${d["Total Affected"]}</div>
+                                `)
+                                .style("left", `${event.pageX + 15}px`)
+                                .style("top", `${event.pageY - 15}px`)
+                                .classed("visible", true);
+                        })
+                        .on("mousemove", (event) => {
+                            d3.select("#tooltip")
+                                .style("left", `${event.pageX + 15}px`)
+                                .style("top", `${event.pageY - 15}px`);
+                        })
+                        .on("mouseout", () => {
+                            d3.select("#tooltip").classed("visible", false);
+                        }),
+                    update => update
+                        .transition().duration(500)
+                        .attr("cx", d => x(d["Start Month"]))
+                        .attr("cy", d => y(d["Subregion"]) + y.bandwidth() / 2)
+                        .attr("r", d => rScale(d["Total Affected"])),
+                    exit => exit.remove()
+                );
+            }
+
+            // Handle window resize
+            function handleResize() {
+                const stepH = Math.floor(window.innerHeight * 0.75);
+                step.style("height", stepH + "px");
+                step2.style("height", stepH + "px");
+
+                const figureHeight = 700;
+                const figureMarginTop = 0;
+
+                figure
+                    .style("height", figureHeight + "px")
+                    .style("top", figureMarginTop + "px");
+
+                figure2
+                    .style("height", figureHeight + "px")
+                    .style("top", figureMarginTop + "px");
+
+                d3.select("#scrolly2")
+                    .style("margin-top", 100 + "px");
+
+                scroller.resize();
+                scroller2.resize();
+            }
+
+            // Handle step enter for first section
+            function handleStepEnter(response) {
+                /*
+                    First Section Step Handling:
+                    - Shows step content based on index + 1
+                    - Example: index 0 shows data-step="1" content
+                    - No special handling needed for regular steps
+                */
+                step.classed("is-active", function (d, i) {
+                    return i === response.index;
+                });
+
+                // Hide all step content
+                d3.selectAll(".step-content")
+                    .classed("active", false)
+                    .style("display", "none");
+
+                // Show current step content
+                d3.select(`.step-content[data-step="${response.index + 1}"]`)
+                    .classed("active", true)
+                    .style("display", "block");
+            }
+
+            // Handle step enter for second section
+            function handleStepEnter2(response) {
+                /*
+                    Second Section Step Handling:
+                    - Shows step content based on index + 6
+                    - Example: index 0 shows data-step="6" content
+                    - Special handling for chart initialization on index 1 (step 7)
+                */
+                step2.classed("is-active", function (d, i) {
+                    return i === response.index;
+                });
+
+                // Hide all step content
+                d3.selectAll(".step-content")
+                    .classed("active", false)
+                    .style("display", "none");
+
+                // Show current step content
+                d3.select(`.step-content[data-step="${response.index + 6}"]`)
+                    .classed("active", true)
+                    .style("display", "block");
+
+                // Initialize chart on the last step
+                if (response.index === 1) {
+                    update(validYears[0]);
+                }
+            }
+
+            // Initialize everything
+            function init() {
+                handleResize();
+                scroller
+                    .setup({
+                        step: "#scrolly article .step",
+                        offset: 0.33,
+                        debug: false
+                    })
+                    .onStepEnter(handleStepEnter);
+
+                scroller2
+                    .setup({
+                        step: "#scrolly2 article .step",
+                        offset: 0.33,
+                        debug: false
+                    })
+                    .onStepEnter(handleStepEnter2);
+
+                // Initialize with first step content
+                d3.select(".step-content[data-step='1']")
+                    .classed("active", true)
+                    .style("display", "block");
+            }
+
+            // Start everything
+            init();
+            window.addEventListener('resize', handleResize);
+        });
+    </script>
+</body>
+
+</html>

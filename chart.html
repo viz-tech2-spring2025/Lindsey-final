@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tropical Cyclones - Final</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: black;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    svg {
+      background-color: black;
+    }
+
+    .tick-line {
+      stroke: #666;
+      stroke-width: 1px;
+      stroke-dasharray: 4;
+    }
+
+    .circle-solid, .circle-outline {
+      cursor: pointer;
+    }
+
+    .circle-solid {
+      fill: red;
+      opacity: 0.6;
+    }
+
+    .circle-outline {
+      fill: none;
+      stroke: red;
+      stroke-width: 1.5px;
+      cursor: pointer;
+    }
+
+    .month-label, .y-label {
+      fill: white;
+      font-size: 12px;
+    }
+
+    .tooltip {
+      position: absolute;
+      background: black;
+      border: 1px solid white;
+      color: white;
+      padding: 6px 10px;
+      font-size: 12px;
+      pointer-events: none;
+      border-radius: 4px;
+    }
+
+    .button-container {
+        width: 1000px; /* total SVG width */
+        margin: 0 auto;
+        position: relative;
+        margin-top: 20px;
+    }
+
+    .year-button {
+      width: 48px;
+      height: 48px;
+      border-radius: 24px;
+      border: 2px solid white;
+      background-color: white;
+      color: black;
+      font-weight: bold;
+      text-align: center;
+      margin: 0 20px;
+      cursor: pointer;
+      top: -14px;
+      position: relative;
+    }
+
+    .year-button.selected {
+      background-color: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .legend {
+      font-size: 14px;
+      fill: white;
+    }
+  </style>
+</head>
+<body>
+    <div style="display: flex; justify-content: center; align-items: flex-start;">
+        <svg id="chart" width="1000" height="670"></svg>
+        <svg id="legend" width="350" height="670" style="margin-left: 20px;"></svg>
+    </div>
+  <div id="tooltip" class="tooltip" style="opacity:0;"></div>
+  <div class="button-container">
+    <svg id="button-lines" width="1000" height="60"></svg>
+    <div class="button-group" id="buttons" style="display: flex; justify-content: center; gap: 20px; margin-left:-100px; margin-top: -84px;"></div>
+
+  </div>
+
+  <script>
+    const margin = { top: 20, right: 30, bottom: 70, left: 240 };
+    const width = 1000 - margin.left - margin.right;
+    const height = 600 - margin.top - margin.bottom;
+
+    //Parameters for scaling the circles on the chart 
+    const scaleFactor = 5;
+    const rMin = 3 * scaleFactor;    // minimum size for outlined circles
+    const rMax = 25 * scaleFactor;   // max size for outlined circles
+    const rFixed = 10; // controls the size for the filled circles
+
+    const subregionFilter = new Set([
+      "Latin America and the Caribbean",
+      "Southeastern Asia",
+      "Eastern Asia",
+      "Southern Asia",
+      "Sub-Saharan Africa",
+      "Northern America",
+      "Melanesia"
+    ]);
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+
+
+    const svg = d3.select("#chart")
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const tooltip = d3.select("#tooltip");
+
+    d3.csv("tropical_cyclones_filtered.csv", d3.autoType).then(data => {
+      data = data.filter(d => subregionFilter.has(d["Subregion"]));
+      const yearsToShow = [1900, 1940, 1960, 1980, 2000, 2020];
+      const dataByYear = d3.group(data, d => d["Start Year"]);
+      const validYears = yearsToShow.filter(y => dataByYear.has(y));
+      const allSubregions = Array.from(subregionFilter);
+
+      const x = d3.scaleLinear().domain([1, 12]).range([0, width]);
+      const y = d3.scaleBand().domain(allSubregions).range([0, height]).padding(0.3);
+
+      
+     //Scale for outlined circles
+    const rScale = d3.scaleSqrt()
+        .domain([0, d3.max(data, d => d["Total Affected"] || 1000)])
+        .range([rMin, rMax]);
+
+      // Dashed vertical ticks
+      svg.selectAll(".tick-line")
+        .data(d3.range(1, 13))
+        .join("line")
+        .attr("class", "tick-line")
+        .attr("x1", d => x(d))
+        .attr("x2", d => x(d))
+        .attr("y1", 0)
+        .attr("y2", height);
+
+      // Month labels
+      svg.selectAll(".month-label")
+        .data(d3.range(1, 13))
+        .join("text")
+        .attr("class", "month-label")
+        .attr("x", d => x(d))
+        .attr("y", height + 15)
+        .attr("text-anchor", "middle")
+        .text(d => monthNames[d - 1]);
+
+      // Y labels
+      svg.selectAll(".y-label")
+        .data(allSubregions)
+        .join("text")
+        .attr("class", "y-label")
+        .attr("x", -40)
+        .attr("y", d => y(d) + y.bandwidth() / 2)
+        .attr("text-anchor", "end")
+        .attr("alignment-baseline", "middle")
+        .text(d => d);
+
+      // Legend
+      const rScaleLegend =  d3.scaleSqrt()
+        .domain([1000, 1000000])
+        .range([10, 60]);
+      const legendSvg = d3.select("#legend");
+        // horizontal legend layout
+        const legendVals = [10000, 100000, 500000, 1000000];
+      const xCircle = 80;
+      const xLabel = 160;
+      const yCircle = 200;
+
+      legendSvg.append("text")
+        .attr("x", 10)
+        .attr("y", 40)
+        .style("fill", "white")
+        .style("font-size", "18px")
+        .text("Total Affected");
+
+      legendSvg.selectAll("legend-circle")
+        .data(legendVals)
+        .enter()
+        .append("circle")
+          .attr("cx", xCircle)
+          .attr("cy", d => yCircle - rScaleLegend(d))
+          .attr("r", d => rScaleLegend(d))
+          .style("fill", "none")
+          .attr("stroke", "red");
+
+      legendSvg.selectAll("legend-line")
+        .data(legendVals)
+        .enter()
+        .append("line")
+          .attr("x1", d => xCircle + rScaleLegend(d))
+          .attr("x2", xLabel)
+          .attr("y1", d => yCircle - rScaleLegend(d))
+          .attr("y2", d => yCircle - rScaleLegend(d))
+          .attr("stroke", "white")
+          .style("stroke-dasharray", ("2,2"));
+
+      legendSvg.selectAll("legend-text")
+        .data(legendVals)
+        .enter()
+        .append("text")
+          .attr("x", xLabel + 5)
+          .attr("y", d => yCircle - rScaleLegend(d))
+          .text(d => `${d / 1000}k`)
+          .style("fill", "white")
+          .style("font-size", "12px")
+          .attr("alignment-baseline", "middle");
+
+
+      // Draw buttons
+      const buttonGroup = d3.select("#buttons");
+      validYears.forEach((year, i) => {
+        const btn = buttonGroup.append("button")
+          .attr("class", "year-button")
+          .text(year)
+          .on("click", () => {
+            d3.selectAll(".year-button").classed("selected", false);
+            btn.classed("selected", true);
+            update(year);
+          });
+      });
+
+      function update(year) {
+        const yearData = dataByYear.get(year) || [];
+
+        // Red solid fixed-size
+        const fixed = svg.selectAll(".circle-solid")
+          .data(yearData, (d, i) => d["Subregion"] + d["Start Month"] + i);
+
+        fixed.join(
+          enter => enter.append("circle")
+            .attr("class", "circle-solid")
+            .attr("cx", d => x(d["Start Month"]))
+            .attr("cy", d => y(d["Subregion"]) + y.bandwidth() / 2)
+            .attr("r", rFixed)
+            .on("mouseover", (event, d) => {
+              tooltip.transition().duration(200).style("opacity", 1);
+              tooltip.html(`
+                <strong>Subregion:</strong> ${d["Subregion"]}<br/>
+                <strong>Month:</strong> ${monthNames[d["Start Month"] - 1]}<br/>
+                <strong>Total Affected:</strong> ${d["Total Affected"] || "N/A"}
+              `)
+              .style("left", `${event.pageX + 10}px`)
+              .style("top", `${event.pageY - 28}px`);
+            })
+            .on("mouseout", () => tooltip.transition().duration(300).style("opacity", 0)),
+          update => update
+            .transition().duration(500)
+            .attr("cx", d => x(d["Start Month"]))
+            .attr("cy", d => y(d["Subregion"]) + y.bandwidth() / 2),
+          exit => exit.remove()
+        );
+
+        // Outlined red stroke
+        const outline = svg.selectAll(".circle-outline")
+          .data(yearData.filter(d => d["Total Affected"] != null), d => d["Subregion"] + d["Start Month"]);
+
+          outline.join(
+            enter => enter.append("circle")
+                .attr("class", "circle-outline")
+                .attr("cx", d => x(d["Start Month"]))
+                .attr("cy", d => y(d["Subregion"]) + y.bandwidth() / 2)
+                .attr("r", d => rScale(d["Total Affected"]))
+                .on("mouseover", (event, d) => {
+                tooltip.transition().duration(200).style("opacity", 1);
+                tooltip.html(`
+                    <strong>Subregion:</strong> ${d["Subregion"]}<br/>
+                    <strong>Month:</strong> ${monthNames[d["Start Month"] - 1]}<br/>
+                    <strong>Total Affected:</strong> ${d["Total Affected"]}
+                `)
+                .style("left", `${event.pageX + 10}px`)
+                .style("top", `${event.pageY - 28}px`);
+                })
+                .on("mouseout", () => tooltip.transition().duration(300).style("opacity", 0)),
+                
+            update => update
+                .transition().duration(500)
+                .attr("cx", d => x(d["Start Month"]))
+                .attr("cy", d => y(d["Subregion"]) + y.bandwidth() / 2)
+                .attr("r", d => rScale(d["Total Affected"])),
+                
+            exit => exit.remove()
+            );
+      }
+
+      // Initialize
+      d3.selectAll(".year-button").filter((d, i) => i === 0).classed("selected", true);
+      update(validYears[0]);
+    });
+  </script>
+</body>
+</html>
