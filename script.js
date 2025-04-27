@@ -1,9 +1,4 @@
-
-
-    
-    // Scrollama setup
-    let chartDrawn = false;
-
+// Scrollama setup
 
 var container = d3.select("#scroll");
 var figure = container.select(".image-wrapper"); // Updated to match new image container
@@ -11,6 +6,7 @@ var article = container.select("article");
 var step = article.selectAll(".step");
 
 var scroller = scrollama();
+
 
 // 1. Swap Images with Crossfade
 const imageA = document.getElementById("image-a");
@@ -21,7 +17,7 @@ function swapImages(newSrc) {
 	const next = current === imageA ? imageB : imageA;
 
 	if (current.src.includes(newSrc)) {
-		// Already showing the correct image
+
 		return;
 	}
 
@@ -30,14 +26,8 @@ function swapImages(newSrc) {
 	current.classList.remove("show");
 }
 
-function hideChart() {
-  const chart = document.getElementById("data-chart");
-  if (chart) chart.classList.remove("show");
-}
 
-
-
-//Swap Elements
+// This function swaps the images in the image-wrapper
 function swapElements(elementID, newSrc="") {
   let current;
   let next;
@@ -61,8 +51,7 @@ if (newSrc) {
 }
 
 
-
-// 2. Handle scroll-based events
+/// 2. Handle scroll-based events
 function handleStepEnter(response) {
   console.log(response);
 
@@ -71,58 +60,42 @@ function handleStepEnter(response) {
     return i === response.index;
   });
 
-  // Hide image wrapper for fullscreen image step
-  // if (response.index === 5) {
-  //   figure.style("opacity", 1);
-  // } else {
-  //   figure.style("opacity", 1);
-  // }
 
-  // Swap images
+  /// Swap images!!
   if (response.index === 0) {
-    swapImages("images/01-globe.svg");
+    swapImages("images/01-globe-labels.png");
+
   } else if (response.index === 1) {
     swapImages("images/02-hurricane-scale.svg");
+
   } else if (response.index === 2) {
     swapImages("images/03-reacecar.svg");
+
   } else if (response.index === 3) {
     swapImages("images/04-jet.svg");
+
   } else if (response.index === 4) {
     swapImages("images/05-surge.svg");
+
   } else if (response.index === 5) {
     swapImages("images/06-1970-deaths.svg");
+
   } else if (response.index === 6) {
     swapImages("images/06-1970-deaths.svg");
+
   } else if (response.index === 7) {
     swapImages("images/07-1970-impact.svg");
+
   } else if (response.index === 8) {
     swapImages("images/08-1970-highlight.svg");
-  // } else if (response.index === 9) {
-  //   swapImages("images/09-2005-small.svg");
-  //   document.querySelector("[data-step='9']").style.position = "sticky";
-  //   document.querySelector("[data-step='9']").style.top = "0px";
-  // } else if (response.index === 10) {
-  //   swapImages("images/10-2005-impact.svg");
-  // } else if (response.index === 11) {
-  //   swapImages("images/11-2005-deaths.svg");
-  // } else if (response.index === 12) {
-  //   swapImages("images/12-chart.svg");
-  //   document.querySelector("[data-step='9']").style.position = "relative";
-  // } else if (response.index === 13) {
-  //   swapImages("images/13-chart-labels.svg");
-  // }
 
 } else if (response.index === 9) {
   swapImages("images/09-2005-small.svg");
 
-  // Make step 9 sticky
+  // Make text for step 9 sticky
   const step9 = document.querySelector("[data-step='9']");
   step9.style.position = "sticky";
   step9.style.top = "0px";
-
-  // Just in case it was unset earlier
-  const step12 = document.querySelector("[data-step='12']");
-  step12.style.position = "relative";
 
 } else if (response.index === 10) {
   swapImages("images/10-2005-impact.svg");
@@ -131,7 +104,7 @@ function handleStepEnter(response) {
   swapImages("images/11-2005-deaths.svg");
 
 } else if (response.index === 12) {
-  swapImages("images/12-chart.svg");
+  swapImages("images/12-financials.svg");
 
   // Unstick step 9
   const step9 = document.querySelector("[data-step='9']");
@@ -143,75 +116,64 @@ function handleStepEnter(response) {
   step12.style.top = "0px";
 
 } else if (response.index === 13) {
-  swapImages("images/13-chart-labels.svg");
-
+  swapImages("images/13-financials-labels.svg");
 
 } else if (response.index === 14) {
-  document.getElementById("data-chart").classList.add("show");
+  swapImages("images/text-23.svg");
 
+  // Unstick step 12
   const step12 = document.querySelector("[data-step='12']");
   step12.style.position = "relative";
 
+}else if (response.index === 15) {
+  swapImages("images/text-24.svg");
 
-  if (!chartDrawn) {
-    chartDrawn = true;
+}else if (response.index === 16) {
+  swapImages("images/text-25.svg");
 
-    const container = document.getElementById("data-chart");
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-    const margin = { top: 20, right: 30, bottom: 60, left: 90 };
-    
-    // Inner chart area
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
-    
-    const svg = d3.select("#data-chart")
-      .append("svg")
-        .attr("width", width)
-        .attr("height", height)
-      .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-    
-    d3.csv("storm-data-subregion-filter.csv").then(function(data) {
-      const filteredData = data
-        .filter(d => d["Start Year"] === "2000")
-        .sort((a, b) => Number(a["Start Month"]) - Number(b["Start Month"]));
-    
-      const x = d3.scaleBand()
-        .range([0, innerWidth])
-        .domain(filteredData.map(d => Number(d["Start Month"])))
-        .padding(0.1);
-    
-      svg.append("g")
-        .attr("transform", `translate(0,${innerHeight})`)
-        .call(d3.axisBottom(x))
-        .selectAll("text")
-        .attr("transform", "translate(-10,0)rotate(-45)")
-        .style("text-anchor", "end");
-    
-      const y = d3.scaleBand()
-        .range([innerHeight, 0])
-        .domain(data.map(d => d["Subregion"]));
-    
-      svg.append("g")
-        .call(d3.axisLeft(y));
-    });
-    
-  }
+}else if (response.index === 17) {
+  swapImages("images/text-26.svg");
+
+} else if (response.index === 18) {
+
+  // Swap to iframe
+  document.getElementById("image-a").style.display = "none";  // hide the image
+  document.getElementById("image-c").style.display = "block"; // show the iframe
 }
 
-  // ✅ Add this right after the step 14 condition
-  else {
-    document.getElementById("data-chart").classList.remove("show");
-  }
+// Hide the iframe and show the image again
+if (response.index !== 18) {
+  document.getElementById("image-a").style.display = "block";  // show the image again
+  document.getElementById("image-c").style.display = "none";  // hide the iframe
+}
 
+if (response.index === 19) {
+  swapImages("images/white.png");
 
+}else if (response.index === 20) {
+  swapImages("images/18-list.svg");
+ // Make text for step 20 sticky
+  const step20 = document.querySelector("[data-step='20']");
+  step20.style.position = "sticky";
+  step20.style.top = "0px";
 
+}else if (response.index === 21) {
+  swapImages("images/19-checked-list.svg");
+
+}else if (response.index === 22) {
+  swapImages("images/gauguin.svg");
+
+  // Unstick step 20
+  const step20 = document.querySelector("[data-step='20']");
+  step20.style.position = "relative";
+}
 
   
 
   // Change body background color after specified step
-  if (response.index >= 5) {
+  if (response.index >= 5 && response.index <= 13 ||
+    response.index === 18 ||
+    response.index === 22) {
     document.body.style.backgroundColor = "black";
     document.body.style.color = "white";
   } else {
@@ -221,7 +183,7 @@ function handleStepEnter(response) {
 }
 
 
-// 3. Resize handler
+/// 3. Resize handler
 function handleResize() {
 	var stepHeight = Math.floor(window.innerHeight * 0.75);
 	step.style("height", stepHeight + "px");
@@ -232,7 +194,7 @@ function handleResize() {
 	scroller.resize();
 }
 
-// 4. Initialize Scrollama
+/// 4. Initialize Scrollama
 function init() {
 	handleResize();
 
@@ -247,8 +209,10 @@ function init() {
 	window.addEventListener("resize", handleResize);
 }
 
+// 5. Event Listeners
+// Add event listener to the image elements
 window.addEventListener("DOMContentLoaded", () => {
-  swapImages("images/01-globe.svg");
+  swapImages("images/01-globe-labels.png");
 
 });
 

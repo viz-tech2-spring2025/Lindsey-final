@@ -9,6 +9,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="stylesheet" href="styles.css" />
 	<script src="https://d3js.org/d3.v6.min.js"></script>
+	<script src="https://unpkg.com/intersection-observer"></script>
+	<script src="scrollama.js"></script>
 
 
 	<style>
@@ -52,7 +54,7 @@
 		</section>
 		
 		<div class="full-bleed-image-container">
-			<img src="space_hurricane.jpg" alt="Space view of hurricane" class="full-bleed-image" />
+			<img src="images/space_hurricane.jpg" alt="Space view of hurricane" class="full-bleed-image" />
 			<div class="image-caption">NASA/Goddard Space Flight Center – Hurricane Florence from the ISS, 9/12</div>
 		</div>
 
@@ -123,7 +125,8 @@
 
 			<!-- Step 5: Fullscreen image -->
 			<div class="step fullscreen-image" data-step="5" data-offset=".025">
-				<img src="Hurricane-Ida-Storm-Surge6_cred-Stacey-Cato.webp" />
+				<img src="images/Hurricane-Ida-Storm-Surge6_cred-Stacey-Cato.jpg" />
+				<div class="image-caption">Storm surge from Hurricane Ida overtaking the Waveland, Mississippi Veterans Memorial.</div>
 			</div>
 
 			<!-- Buffer after fullscreen -->
@@ -227,6 +230,7 @@
 						differences are due to variations in ocean temperatures, wind patterns, and the Earth's tilt,
 						which affect where and when conditions are right for hurricanes, cyclones, or typhoons to
 						develop.</p>
+
 				</div>
 
 				<!-- Buffer before fullscreen -->
@@ -235,6 +239,7 @@
 				<!-- Fullscreen image -->
 				<div class="step fullscreen-image" data-step="19" data-offset=".025">
 					<img src="images/prep.jpeg" alt="Prep supplies" />
+					<div class="image-caption">Example of hurricane prep supplies and checklist for planning.</div>
 				</div>
 				
 				<!-- Buffer after fullscreen -->
@@ -256,29 +261,13 @@
 		<div class="image-wrapper">
 			<img src="" id="image-a" class="scroll-image show" />
 			<img src="" id="image-b" class="scroll-image" />
-			<div id="cyclone-chart-wrapper"
-				style="display: none; flex-direction: row; justify-content: center; align-items: flex-start;">
-				<svg id="chart" width="1000" height="670"></svg>
-				<svg id="legend" width="350" height="670" style="margin-left: 20px;"></svg>
-			</div>
-			
-			<!--Interactive Chart -->
-			<div class="button-container" id="cyclone-buttons" style="display: none;">
-				<svg id="button-lines" width="1000" height="60"></svg>
-				<div class="button-group" id="buttons"
-					style="display: flex; justify-content: center; gap: 20px; margin-left:-100px; margin-top: -84px;">
-				</div>
-			</div>
+			<iframe src="chart.html" id="image-c" class="scroll-image show" width="100%" height="1000px" frameborder="0"
+						style="border: 0;"></iframe>
 		</div>
-
-
 
 	</section>
 
-	<script src="https://unpkg.com/intersection-observer"></script>
-	<script src="scrollama.js"></script>
-	<script src="script copy 4_current.js"></script>
-
+	<script src="script.js"></script>
 
 </body>
 

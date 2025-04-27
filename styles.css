@@ -1,27 +1,18 @@
-
-
-		#intro {
-			/* margin-bottom: 320px; */
-		}
-
-		#outro {
-			height: 1200px;
-		}
+#intro {
+	/* margin-bottom: 320px; */
+}
 
 /* scrollama */
 
 #scroll {
-    padding-top:5rem;
-    position: relative;
-    /* border-top: 2px dashed #000; */
-    /* border-bottom: 2px dashed #000; */
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
+	padding-top: 5rem;
+	position: relative;
+	/* border-top: 2px dashed #000; */
+	/* border-bottom: 2px dashed #000; */
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
 }
-
-
-
 
 body {
 	font-family: Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -49,11 +40,6 @@ body {
 	background-color: black;
 	color: white;
 	/* padding: 4rem 0 0 0; */
-}
-
-#intro-wrapper02 {
-	color: white;
-	padding-top: 3em;
 }
 
 
@@ -91,45 +77,44 @@ body {
 
 
 .on-1 {
-color:white;
-background-color: black;
-border-radius: 2rem;
-border-style: double;
-border-width: 6px;
-padding: .75rem;
-margin-right: 1rem;
+	color: white;
+	background-color: black;
+	border-radius: 2rem;
+	border-style: double;
+	border-width: 6px;
+	padding: .75rem;
+	margin-right: 1rem;
 }
 
 .off-1 {
-	color:black;
+	color: black;
 	background-color: white;
 	border-radius: 2rem;
 	border-color: black;
 	border-style: solid;
 	padding: .75rem;
 	margin-right: 1rem;
-	}
+}
 
-	.on-2 {
-		color:black;
-		background-color: white;
-		border-radius: 2rem;
-		border-style: double;
-		border-width: 6px;
-		padding: .75rem;
-		margin-right: 1rem;
-		}
-		
-		.off-2 {
-			color:white;
-			background-color: black;
-			border-radius: 2rem;
-			border-color: white;
-			border-style: solid;
-			padding: .75rem;
-			margin-right: 1rem;
-			}
+.on-2 {
+	color: black;
+	background-color: white;
+	border-radius: 2rem;
+	border-style: double;
+	border-width: 6px;
+	padding: .75rem;
+	margin-right: 1rem;
+}
 
+.off-2 {
+	color: white;
+	background-color: black;
+	border-radius: 2rem;
+	border-color: white;
+	border-style: solid;
+	padding: .75rem;
+	margin-right: 1rem;
+}
 
 .intro_description {
 	display: flex;
@@ -182,10 +167,6 @@ margin-right: 1rem;
 	max-width: 90%;
 }
 
-
-
-
-
 .step {
 	padding: 4rem 1rem;
 	max-width: 40rem;
@@ -206,21 +187,10 @@ margin-right: 1rem;
 	margin: 0;
 }
 
-/* .step[data-step="1"] {
-position: sticky;
-top: 10rem; /* Adjust to where you want it to stick */
-background: white; /* Prevent text from overlapping behind */
-z-index: 2; /* Keep it above other scrolling content */
-padding: 2rem 1rem;
-} */
-
 .step[data-step="2"],
 .step[data-step="3"] {
 min-height: 100vh;
 }
-
-
-
 
 
 figure {
@@ -247,16 +217,6 @@ figure {
 	display: block;
 	/* background-color: aquamarine; */
 }
-
-
-
-
-/* .white-stick {
-	background-color: white;
-	position: sticky
-} */
-
-
 
 figure p {
     text-align: center;
@@ -299,10 +259,6 @@ article {
 	padding: 2rem 1rem 2rem 4rem; /* add some inner space */
 }
 
-.step:last-child {
-    /* border-bottom: 1px solid #333; */
-}
-
 .step.is-active {
     /* background-color: lightgoldenrodyellow; */
 }
@@ -311,13 +267,6 @@ article {
     text-align: left;
     padding: 1rem 0 0 0;
     font-size: 1rem;
-}
-
-/* Total height = how long you want sticky to hold */
-.scroll-hold-zone {
-	position: relative;
-	height: 300vh; /* 1 for sticky text, 2 for scrolling image triggers */
-	/* background-color: green; */
 }
 
 .sticky-text {
@@ -329,32 +278,18 @@ article {
 	background-color: grey;
 }
 
-/* Scroll trigger steps inside sticky zone */
-.scroll-hold-zone .step {
-	height: 100vh;
-}
-
-/* Step 3 scrolls normally */
-/* .step[data-step="3"] {
-	min-height: 100vh;
-	padding: 16rem 1rem;
-	background-color: magenta;
-} */
-
 .image-wrapper {
 	position: sticky;
 	top: 10rem; /* match your sticky layout */
 	width: 100%;
 	max-width: 1000px;
-	height: auto;
+	height: 1000px;
 	aspect-ratio: 4/2;
 	margin: 0 auto;
 	overflow: hidden;
 	z-index: 1;
 	overflow: visible; /* change this from 'hidden' temporarily */
 }
-
-
 
 .scroll-image {
 	position: absolute;
@@ -380,32 +315,6 @@ article {
 .scroll-image.show {
 	font-family: Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
-
-.full-screen-image-section {
-	width: 100%;
-	height: 100vh;
-	overflow: hidden;
-	position: relative;
-}
-
-.full-screen-image-section img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	display: block;
-}
-
-.scroll-section.dark-section {
-	background-color: black;
-	color: white;
-	padding: 4rem 1rem;
-}
-
-.scroll-section.dark-section .step {
-	background-color: transparent;
-	color: white;
-}
-
 
 .full-screen-image-section {
 	width: 100%;
@@ -501,12 +410,6 @@ article {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-  }
-  
-  .fullscreen-block .step[data-step="6"] {
-	position: relative;
-	z-index: 5;
-	background-color: white; /* or your default */
   }
 
   /* When Step 5 is active, hide Step 4 */
@@ -683,6 +586,19 @@ article {
 	z-index: 3;
 	position: relative;
   }
+  
+  
+  #image-c {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: none;
+	object-fit: unset;
+	pointer-events: auto;
+  }
+  
   
   
   
