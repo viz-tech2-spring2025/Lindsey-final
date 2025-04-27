@@ -1,8 +1,8 @@
 
 
     
-    // Scrollama setup
-    let chartDrawn = false;
+// Scrollama setup
+let chartDrawn = false;
 
 
 var container = d3.select("#scroll");
@@ -11,6 +11,7 @@ var article = container.select("article");
 var step = article.selectAll(".step");
 
 var scroller = scrollama();
+
 
 // 1. Swap Images with Crossfade
 const imageA = document.getElementById("image-a");
@@ -21,7 +22,7 @@ function swapImages(newSrc) {
 	const next = current === imageA ? imageB : imageA;
 
 	if (current.src.includes(newSrc)) {
-		// Already showing the correct image
+
 		return;
 	}
 
@@ -30,14 +31,14 @@ function swapImages(newSrc) {
 	current.classList.remove("show");
 }
 
+// Hides the interactive chart when not in use
 function hideChart() {
   const chart = document.getElementById("data-chart");
   if (chart) chart.classList.remove("show");
 }
 
 
-
-//Swap Elements
+// This function swaps the images in the image-wrapper
 function swapElements(elementID, newSrc="") {
   let current;
   let next;
@@ -60,7 +61,8 @@ if (newSrc) {
   current?.classList.remove("show");
 }
 
-//////
+
+/// 1. Draw the interactive chart
 function drawCycloneChart() {
   const margin = { top: 20, right: 30, bottom: 70, left: 210 };
   const width = 1000 - margin.left - margin.right;
@@ -87,8 +89,10 @@ const svg = chartSvg.append("g")
     "Melanesia"
   ]);
 
+  // Define the month names for the x-axis labels
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+  /// Load the data
   d3.csv("tropical_cyclones_filtered.csv", d3.autoType).then(data => {
     data = data.filter(d => subregionFilter.has(d["Subregion"]));
     const yearsToShow = [1960, 1970, 1980, 1990, 2000, 2010, 2020];
@@ -96,6 +100,7 @@ const svg = chartSvg.append("g")
     const validYears = yearsToShow.filter(y => dataByYear.has(y));
     const allSubregions = Array.from(subregionFilter);
 
+    // Set up scales
     const x = d3.scaleLinear().domain([1, 12]).range([0, width]);
     const y = d3.scaleBand().domain(allSubregions).range([0, height]).padding(0.3);
 
@@ -103,7 +108,9 @@ const svg = chartSvg.append("g")
       .domain([0, d3.max(data, d => d["Total Affected"] || 1000)])
       .range([15, 125]);
 
-    // Tick lines, month labels, y-axis labels
+   
+    ///Format the chart
+    // Tick lines
     svg.selectAll(".tick-line")
       .data(d3.range(1, 13))
       .join("line")
@@ -113,6 +120,7 @@ const svg = chartSvg.append("g")
       .attr("y1", 0)
       .attr("y2", height);
 
+    // X-axis labels
     svg.selectAll(".month-label")
       .data(d3.range(1, 13))
       .join("text")
@@ -122,6 +130,7 @@ const svg = chartSvg.append("g")
       .attr("text-anchor", "middle")
       .text(d => monthNames[d - 1]);
 
+    // Y-axis labels
     svg.selectAll(".y-label")
       .data(allSubregions)
       .join("text")
@@ -132,12 +141,14 @@ const svg = chartSvg.append("g")
       .attr("alignment-baseline", "middle")
       .text(d => d);
 
-    // Legend
+    
+    /// Legend
     const rScaleLegend = d3.scaleSqrt().domain([1000, 1000000]).range([10, 60]);
     const legendSvg = d3.select("#legend");
     const legendVals = [10000, 100000, 500000, 1000000];
     const xCircle = 80, xLabel = 160, yCircle = 200;
 
+    //Legend title
     legendSvg.append("text")
       .attr("x", 10)
       .attr("y", 40)
@@ -145,6 +156,7 @@ const svg = chartSvg.append("g")
       .style("font-size", "18px")
       .text("Total Affected");
 
+    // Legend circles
     legendSvg.selectAll("legend-circle")
       .data(legendVals)
       .enter().append("circle")
@@ -154,6 +166,7 @@ const svg = chartSvg.append("g")
       .style("fill", "none")
       .attr("stroke", "red");
 
+    // Legend lines
     legendSvg.selectAll("legend-line")
       .data(legendVals)
       .enter().append("line")
@@ -162,8 +175,9 @@ const svg = chartSvg.append("g")
       .attr("y1", d => yCircle - rScaleLegend(d))
       .attr("y2", d => yCircle - rScaleLegend(d))
       .attr("stroke", "white")
-      .style("stroke-dasharray", ("2,2"));
+      .style("stroke-dasharray", ("2,2")); // Dashed line
 
+    // Legend labels
     legendSvg.selectAll("legend-text")
       .data(legendVals)
       .enter().append("text")
@@ -174,7 +188,8 @@ const svg = chartSvg.append("g")
       .style("font-size", "12px")
       .attr("alignment-baseline", "middle");
 
-    // Buttons
+    
+    /// Buttons
     const buttonGroup = d3.select("#buttons");
     validYears.forEach((year, i) => {
       const btn = buttonGroup.append("button")
@@ -187,18 +202,20 @@ const svg = chartSvg.append("g")
         });
     });
 
+    // Initial button state
     function update(year) {
       const yearData = dataByYear.get(year) || [];
 
+      // Update the chart with the selected year's data
       svg.selectAll(".circle-solid")
         .data(yearData, (d, i) => d["Subregion"] + d["Start Month"] + i)
         .join(
           enter => enter.append("circle")
             .attr("class", "circle-solid")
             .attr("cx", d => x(d["Start Month"]))
-            .attr("cy", d => y(d["Subregion"]) + y.bandwidth() / 2)
+            .attr("cy", d => y(d["Subregion"]) + y.bandwidth() / 2) // Center the circle vertically
             .attr("r", 10)
-            .on("mouseover", (event, d) => {
+            .on("mouseover", (event, d) => { // Show tooltip on hover
               tooltip.transition().duration(200).style("opacity", 1);
               tooltip.html(`
                 <strong>Subregion:</strong> ${d["Subregion"]}<br/>
@@ -208,6 +225,7 @@ const svg = chartSvg.append("g")
                 .style("left", `${event.pageX + 10}px`)
                 .style("top", `${event.pageY - 28}px`);
             })
+            // Hide tooltip on mouseout
             .on("mouseout", () => tooltip.transition().duration(300).style("opacity", 0)),
           update => update.transition().duration(500)
             .attr("cx", d => x(d["Start Month"]))
@@ -215,16 +233,17 @@ const svg = chartSvg.append("g")
           exit => exit.remove()
         );
 
+      // Update the outline circles
       svg.selectAll(".circle-outline")
         .data(yearData.filter(d => d["Total Affected"] != null), d => d["Subregion"] + d["Start Month"])
         .join(
-          enter => enter.append("circle")
+          enter => enter.append("circle") // Add outline circles
             .attr("class", "circle-outline")
             .attr("cx", d => x(d["Start Month"]))
             .attr("cy", d => y(d["Subregion"]) + y.bandwidth() / 2)
             .attr("r", d => rScale(d["Total Affected"]))
             .on("mouseover", (event, d) => {
-              tooltip.transition().duration(200).style("opacity", 1);
+              tooltip.transition().duration(200).style("opacity", 1); // Show tooltip on hover
               tooltip.html(`
                 <strong>Subregion:</strong> ${d["Subregion"]}<br/>
                 <strong>Month:</strong> ${monthNames[d["Start Month"] - 1]}<br/>
@@ -235,6 +254,7 @@ const svg = chartSvg.append("g")
             })
             .on("mouseout", () => tooltip.transition().duration(300).style("opacity", 0)),
           update => update.transition().duration(500)
+          // Update existing outline circles
             .attr("cx", d => x(d["Start Month"]))
             .attr("cy", d => y(d["Subregion"]) + y.bandwidth() / 2)
             .attr("r", d => rScale(d["Total Affected"])),
@@ -242,13 +262,14 @@ const svg = chartSvg.append("g")
         );
     }
 
-    d3.selectAll(".year-button").filter((d, i) => i === 0).classed("selected", true);
-    update(validYears[0]);
+    // Initial update with the first year
+    d3.selectAll(".year-button").filter((d, i) => i === 0).classed("selected", true); // Highlight the first button
+    update(validYears[0]); // Call update with the first year
   });
 }
 
 
-// 2. Handle scroll-based events
+/// 2. Handle scroll-based events
 function handleStepEnter(response) {
   console.log(response);
 
@@ -257,58 +278,46 @@ function handleStepEnter(response) {
     return i === response.index;
   });
 
-  // Hide image wrapper for fullscreen image step
-  // if (response.index === 5) {
-  //   figure.style("opacity", 1);
-  // } else {
-  //   figure.style("opacity", 1);
-  // }
 
-  // Swap images
+  /// Swap images!!
   if (response.index === 0) {
     swapImages("images/01-globe-labels.png");
+
   } else if (response.index === 1) {
     swapImages("images/02-hurricane-scale.svg");
+
   } else if (response.index === 2) {
     swapImages("images/03-reacecar.svg");
+
   } else if (response.index === 3) {
     swapImages("images/04-jet.svg");
+
   } else if (response.index === 4) {
     swapImages("images/05-surge.svg");
+
   } else if (response.index === 5) {
     swapImages("images/06-1970-deaths.svg");
+
   } else if (response.index === 6) {
     swapImages("images/06-1970-deaths.svg");
+
   } else if (response.index === 7) {
     swapImages("images/07-1970-impact.svg");
+
   } else if (response.index === 8) {
     swapImages("images/08-1970-highlight.svg");
-  // } else if (response.index === 9) {
-  //   swapImages("images/09-2005-small.svg");
-  //   document.querySelector("[data-step='9']").style.position = "sticky";
-  //   document.querySelector("[data-step='9']").style.top = "0px";
-  // } else if (response.index === 10) {
-  //   swapImages("images/10-2005-impact.svg");
-  // } else if (response.index === 11) {
-  //   swapImages("images/11-2005-deaths.svg");
-  // } else if (response.index === 12) {
-  //   swapImages("images/12-chart.svg");
-  //   document.querySelector("[data-step='9']").style.position = "relative";
-  // } else if (response.index === 13) {
-  //   swapImages("images/13-chart-labels.svg");
-  // }
 
 } else if (response.index === 9) {
   swapImages("images/09-2005-small.svg");
 
-  // Make step 9 sticky
+  // Make text for step 9 sticky
   const step9 = document.querySelector("[data-step='9']");
   step9.style.position = "sticky";
   step9.style.top = "0px";
 
-  // Just in case it was unset earlier
-  const step12 = document.querySelector("[data-step='12']");
-  step12.style.position = "relative";
+  // Make text for step 9 unsticky
+  // const step12 = document.querySelector("[data-step='12']");
+  // step12.style.position = "relative";
 
 } else if (response.index === 10) {
   swapImages("images/10-2005-impact.svg");
@@ -317,7 +326,7 @@ function handleStepEnter(response) {
   swapImages("images/11-2005-deaths.svg");
 
 } else if (response.index === 12) {
-  swapImages("images/12-chart.svg");
+  swapImages("images/12-financials.svg");
 
   // Unstick step 9
   const step9 = document.querySelector("[data-step='9']");
@@ -329,8 +338,7 @@ function handleStepEnter(response) {
   step12.style.top = "0px";
 
 } else if (response.index === 13) {
-  swapImages("images/13-chart-labels.svg");
-
+  swapImages("images/13-financials-labels.svg");
 
 } else if (response.index === 14) {
   swapImages("images/text-23.svg");
@@ -385,98 +393,6 @@ if (response.index === 19) {
   step20.style.position = "relative";
 }
 
-
-
-
-
-/*else if (response.index === 14) {
-  document.getElementById("data-chart").classList.add("show");
-
-  const step12 = document.querySelector("[data-step='12']");
-  step12.style.position = "relative";
-
-  
-
-
-  if (!chartDrawn) {
-    chartDrawn = true;
-
-    const container = document.getElementById("data-chart");
-const width = container.clientWidth;
-const height = container.clientHeight;
-const margin = { top: 20, right: 30, bottom: 60, left: 90 };
-
-const innerWidth = width - margin.left - margin.right;
-const innerHeight = height - margin.top - margin.bottom;
-
-const svg = d3.select("#data-chart")
-  .append("svg")
-    .attr("width", width)
-    .attr("height", height)
-  .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
-
-d3.csv("storm-data-subregion-filter.csv").then(function(data) {
-  // Filter if needed
-  const filteredData = data
-    .filter(d => d["Start Year"] === "2000");
-
-  // X axis: months 1–12
-  const allMonths = d3.range(1, 13);
-  const x = d3.scaleBand()
-    .range([0, innerWidth])
-    .domain(allMonths)
-    .padding(0.1);
-
-  svg.append("g")
-    .attr("transform", `translate(0,${innerHeight})`)
-    .call(
-      d3.axisBottom(x).tickFormat(d =>
-        d3.timeFormat("%b")(new Date(2000, d - 1))
-      )
-    )
-    .selectAll("text")
-    .attr("transform", "translate(-10,0)rotate(-45)")
-    .style("text-anchor", "end");
-
-  // Y axis: subregions in dataset
-  const allSubregions = Array.from(new Set(data.map(d => d["Subregion"])));
-  const y = d3.scaleBand()
-    .range([innerHeight, 0])
-    .domain(allSubregions)
-    .padding(0.1);
-
-  svg.append("g")
-    .call(d3.axisLeft(y));
-
-  // Plot each storm as a circle
-  svg.selectAll("circle")
-    .data(filteredData)
-    .enter()
-    .append("circle")
-      .attr("cx", d => x(Number(d["Start Month"])) + x.bandwidth() / 2)
-      .attr("cy", d => y(d["Subregion"]) + y.bandwidth() / 2)
-      .attr("r", 6)
-      .attr("fill", "orange")
-      .attr("opacity", 0.7);
-});
-
-    
-  }
-}*/
-
-// else if (response.index === 14) {
-//  // hideChart(); // Optional: hide any other chart
-//   drawCycloneChart(); // Call only once if needed
-// }
-//   // ✅ Add this right after the step 14 condition
-//   else {
-//     document.getElementById("data-chart").classList.remove("show");
-//   }
-
-
-
-
   
 
   // Change body background color after specified step
@@ -492,7 +408,7 @@ d3.csv("storm-data-subregion-filter.csv").then(function(data) {
 }
 
 
-// 3. Resize handler
+/// 3. Resize handler
 function handleResize() {
 	var stepHeight = Math.floor(window.innerHeight * 0.75);
 	step.style("height", stepHeight + "px");
@@ -503,7 +419,7 @@ function handleResize() {
 	scroller.resize();
 }
 
-// 4. Initialize Scrollama
+/// 4. Initialize Scrollama
 function init() {
 	handleResize();
 
