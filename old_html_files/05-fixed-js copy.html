@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Scrollama Demo: Fixed JS</title>
+	<meta name="description" content="Scrollama Demo: Fixed JS" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="styles.css" />
+	<style>
+		/* default / demo page */
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			font-weight: 300;
+			color: black;
+			line-height: 1.6;
+			font-size: 1.2rem;
+			margin: 0;
+			padding: 0;
+			overflow-x: hidden;
+			/* prevent any accidental horizontal scroll */
+		}
+
+		#intro {
+			max-width: 40rem;
+			margin: 2rem auto;
+			text-align: center;
+			padding: 0 1rem;
+			background-color: black;
+			padding: 4rem 0;
+			color: white;
+		}
+
+		#intro-wrapper {
+			background-color: black;
+			color: white;
+			/* padding: 4rem 0 0 0; */
+		}
+
+
+		.intro__hed {
+			font-size: 3rem;
+			font-weight: 900;
+			letter-spacing: 0.05em;
+			margin-bottom: 1rem;
+		}
+
+		.red-plus {
+			color: #e63946;
+			/* or any red shade you like */
+		}
+
+
+		.intro__dek {
+			font-size: 1.5rem;
+			font-weight: 400;
+			margin-bottom: 2rem;
+		}
+
+		.intro_description {
+			display: flex;
+			gap: 2rem;
+			max-width: 800px;
+			margin: 2rem auto;
+			text-align: left;
+		}
+
+		.intro_description .column {
+			width: 50%;
+			font-size: 1.1rem;
+			line-height: 1.6;
+		}
+
+		.intro-image {
+			width: 100%;
+			height: auto;
+			display: block;
+			margin-top: 2rem;
+			margin-right: 0em;
+			margin-left: 0em;
+
+		}
+
+		.full-bleed-image-container {
+			position: relative;
+			width: 100%;
+			overflow: hidden;
+		}
+
+		.full-bleed-image {
+			width: 100%;
+			height: auto;
+			display: block;
+		}
+
+
+		.image-caption {
+			position: absolute;
+			bottom: 1rem;
+			right: 1rem;
+			background-color: rgba(0, 0, 0, 0.6);
+			/* subtle overlay for readability */
+			color: white;
+			font-size: 0.9rem;
+			padding: 0.5rem 0.75rem;
+			border-radius: 0.25rem;
+			font-style: italic;
+			max-width: 90%;
+		}
+
+
+
+
+
+		.step {
+			padding: 4rem 1rem;
+			max-width: 40rem;
+			margin: 0 auto;
+		}
+
+		.step h3 {
+			font-size: 2rem;
+			font-weight: 800;
+			margin-bottom: 1rem;
+		}
+
+		.step p {
+			font-size: 1.1rem;
+			text-align: left;
+			margin: 0;
+		}
+
+		.step[data-step="1"] {
+	position: sticky;
+	top: 10rem; /* Adjust to where you want it to stick */
+	background: white; /* Prevent text from overlapping behind */
+	z-index: 2; /* Keep it above other scrolling content */
+	padding: 2rem 1rem;
+}
+
+.step[data-step="2"],
+.step[data-step="3"] {
+	min-height: 100vh;
+}
+
+
+
+
+
+
+
+	</style>
+
+
+
+</head>
+
+<body>
+	<section id="intro-wrapper">
+		<section id="intro">
+			<h1 class="intro__hed">Stormscapes</h1>
+			<h2 class="intro__dek">
+				A Century<span class="red-plus">+</span> of Cyclones
+			</h2>
+			<div class="intro_description">
+				<div class="column">
+					Tropical cyclones are among the most powerful and destructive forces on Earth. Forming over warm
+					ocean
+					waters, these storms—known as hurricanes, typhoons, or cyclones depending on the region—bring
+					intense
+					winds, torrential rains, and devastating storm surges. Over the past century, their frequency and
+					intensity have been rising, leaving a lasting impact on coastal communities worldwide.
+				</div>
+				<div class="column">
+					This project explores the evolving story of tropical cyclones: how their activity has increased over
+					time, how they affect people across the globe, and how communities respond in the face of disaster.
+					Use
+					the following visualizations to explore the history of these devastating storms and the resilience
+					that
+					emerges in their aftermath.
+				</div>
+			</div>
+		</section>
+		<div class="full-bleed-image-container">
+			<img src="space_hurricane.jpg" alt="Space view of hurricane" class="full-bleed-image" />
+			<div class="image-caption">NASA/Goddard Space Flight Center – Hurricane Florence from the ISS, 9/12</div>
+		</div>
+
+	</section>
+
+	<section id="scroll">
+<article>
+	<!-- Sticky scroll zone: holds Step 1 and image swaps -->
+	
+	<div class="scroll-hold-zone">
+		<div class="sticky-text">
+			<h3>That’s some <br>strong wind!</h3>
+			<p class="p-step">The Saffir-Simpson Hurricane Wind Scale is a 1 to 5 rating system based on a hurricane's sustained wind speed, used to estimate potential property damage and flooding, with Category 3 and higher storms considered major hurricanes.</p>
+		</div>
+
+		<!-- Scroll triggers for image changes -->
+		<div class="step" data-step="1"></div>
+		<div class="step" data-step="2"></div>
+	</div>
+
+	<!-- New scroll zone: sticky ends, new text + image scroll together -->
+	<div class="step" data-step="3">
+		<h3>Storm Surge</h3>
+		<p>Storm surge is an abnormal water level rise generated by a storm over and above the predicted astronomical tide. Storm tide is the water level rise due to the combination of storm surge and the astronomical tide.</p>
+		<p>Storm surge during Hurricane Katrina (2005) reached 25 to 28 feet along the Mississippi Coast, one of the highest storm surges ever recorded in the US.</p>
+	</div>
+
+	<!-- <div class="step" data-step="4">
+		<h3>Storm surge on the rise</h3>
+		<p>STEP 3 TEXT</p>
+	</div>
+
+	<div class="step" data-step="5">
+		<h3>Storm surge on the rise</h3>
+		<p>STEP 4 TEXT</p>
+	</div> -->
+</article>
+
+<!-- <figure>
+	<img src="hurricane-scale.svg" id="main-image" class="scroll-image" />
+</figure> -->
+
+
+
+
+			<figure>
+				<img src="hurricane-scale.svg" alt="Hurricane wind scale" id="main-image" class="scroll-image" />
+			</figure>
+	</section>
+
+
+	
+	<!-- <section id="outro"></section> -->
+
+
+	
+	<!-- <script src="https://d3js.org/d3.v4.min.js"></script> -->
+	<script src="d3.v4.min.js"></script>
+	<script src="https://unpkg.com/intersection-observer"></script>
+	<!-- <script src="https://unpkg.com/scrollama"></script> -->
+	<script src="scrollama.js"></script>
+	<script src="script.js"></script>
+</body>
+
+</html>

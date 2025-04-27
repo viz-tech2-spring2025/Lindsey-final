@@ -1,0 +1,690 @@
+
+
+		#intro {
+			/* margin-bottom: 320px; */
+		}
+
+		#outro {
+			height: 1200px;
+		}
+
+/* scrollama */
+
+#scroll {
+    padding-top:5rem;
+    position: relative;
+    /* border-top: 2px dashed #000; */
+    /* border-bottom: 2px dashed #000; */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+
+
+
+body {
+	font-family: Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	font-weight: 300;
+	color: black;
+	line-height: 1.6;
+	font-size: 1.2rem;
+	margin: 0;
+	padding: 0;
+	overflow-x: hidden;
+	/* prevent any accidental horizontal scroll */
+}
+
+#intro {
+	max-width: 45rem;
+	margin: 0 auto;
+	text-align: center;
+	padding: 0 1rem;
+	background-color: black;
+	padding: 4rem 0;
+	color: white;
+}
+
+#intro-wrapper {
+	background-color: black;
+	color: white;
+	/* padding: 4rem 0 0 0; */
+}
+
+#intro-wrapper02 {
+	color: white;
+	padding-top: 3em;
+}
+
+
+.intro__hed {
+	font-size: 4rem;
+	font-weight: 900;
+	letter-spacing: 0.05em;
+	margin-bottom: 1rem;
+}
+
+.intro__dek {
+	font-size: 2.5rem;
+	font-weight: 400;
+	margin-bottom: 3.5rem;
+	margin-top: -1.5rem;
+}
+
+.red-plus {
+	color: #e63946;
+}
+
+
+.buttons {
+	margin-top: 3rem;
+	opacity: 0;
+	transition: opacity 0.75s ease-in-out;
+	transition-delay: 2s;
+}
+
+
+.is-active .buttons {
+	opacity: 1;
+	transition-delay: .15s;
+}
+
+
+.on-1 {
+color:white;
+background-color: black;
+border-radius: 2rem;
+border-style: double;
+border-width: 6px;
+padding: .75rem;
+margin-right: 1rem;
+}
+
+.off-1 {
+	color:black;
+	background-color: white;
+	border-radius: 2rem;
+	border-color: black;
+	border-style: solid;
+	padding: .75rem;
+	margin-right: 1rem;
+	}
+
+	.on-2 {
+		color:black;
+		background-color: white;
+		border-radius: 2rem;
+		border-style: double;
+		border-width: 6px;
+		padding: .75rem;
+		margin-right: 1rem;
+		}
+		
+		.off-2 {
+			color:white;
+			background-color: black;
+			border-radius: 2rem;
+			border-color: white;
+			border-style: solid;
+			padding: .75rem;
+			margin-right: 1rem;
+			}
+
+
+.intro_description {
+	display: flex;
+	gap: 2rem;
+	max-width: 800px;
+	margin: 2rem auto;
+	text-align: left;
+}
+
+.intro_description .column {
+	width: 50%;
+	font-size: 1.1rem;
+	line-height: 1.6;
+}
+
+.intro-image {
+	width: 100%;
+	height: auto;
+	display: block;
+	margin-top: 2rem;
+	margin-right: 0em;
+	margin-left: 0em;
+
+}
+
+.full-bleed-image-container {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+}
+
+.full-bleed-image {
+	width: 100%;
+	height: auto;
+	display: block;
+}
+
+
+.image-caption {
+	position: absolute;
+	bottom: 1rem;
+	right: 1rem;
+	background-color: rgba(0, 0, 0, 0.6);
+	/* subtle overlay for readability */
+	color: white;
+	font-size: 0.9rem;
+	padding: 0.5rem 0.75rem;
+	border-radius: 0.25rem;
+	font-style: italic;
+	max-width: 90%;
+}
+
+
+
+
+
+.step {
+	padding: 4rem 1rem;
+	max-width: 40rem;
+	margin: 0 auto;
+	/* background-color: brown; */
+	align-content: space-evenly;
+}
+
+.step h3 {
+	font-size: 2rem;
+	font-weight: 800;
+	margin-bottom: 1rem;
+}
+
+.step p {
+	font-size: 1.1rem;
+	text-align: left;
+	margin: 0;
+}
+
+/* .step[data-step="1"] {
+position: sticky;
+top: 10rem; /* Adjust to where you want it to stick */
+background: white; /* Prevent text from overlapping behind */
+z-index: 2; /* Keep it above other scrolling content */
+padding: 2rem 1rem;
+} */
+
+.step[data-step="2"],
+.step[data-step="3"] {
+min-height: 100vh;
+}
+
+
+
+
+
+figure {
+	position: sticky;
+	top: 15rem;
+	width: 100%;
+	max-width: 800px; /* You can adjust this */
+	margin: 0 auto;
+	/* background-color: purple; */
+	/* border: 1px solid #000; */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden; /* This prevents image overflow */
+	aspect-ratio: 4 / 3; /* Keeps the figure box proportional */
+}
+
+.scroll-image {
+	max-width: 100%;
+	max-height: 100%;
+	height: auto;
+	width: auto;
+	object-fit: contain;
+	display: block;
+	/* background-color: aquamarine; */
+}
+
+
+
+
+/* .white-stick {
+	background-color: white;
+	position: sticky
+} */
+
+
+
+figure p {
+    text-align: center;
+    padding: 1rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -moz-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    font-size: 8rem;
+    font-weight: 900;
+    /* color: #666; */
+}
+
+.p-step {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    text-align: left;
+    margin-top: 1rem;
+}
+
+
+
+/* text */
+
+article {
+    position: relative;
+    padding: 0 2rem 0 0;
+    width: 35rem;
+	/* background-color: orange; */
+}
+
+.step {
+    margin: 0 auto 2rem auto;
+    /* border: 1px solid #333; */
+    position: relative;
+    /* border-bottom: none; */
+    min-height: 20vh; /* adjust this value as needed */
+	padding: 2rem 1rem 2rem 4rem; /* add some inner space */
+}
+
+.step:last-child {
+    /* border-bottom: 1px solid #333; */
+}
+
+.step.is-active {
+    /* background-color: lightgoldenrodyellow; */
+}
+
+.step p {
+    text-align: left;
+    padding: 1rem 0 0 0;
+    font-size: 1rem;
+}
+
+/* Total height = how long you want sticky to hold */
+.scroll-hold-zone {
+	position: relative;
+	height: 300vh; /* 1 for sticky text, 2 for scrolling image triggers */
+	/* background-color: green; */
+}
+
+.sticky-text {
+	position: sticky;
+	top: 10rem;
+	background: white;
+	z-index: 10;
+	padding: 8rem 1rem;
+	background-color: grey;
+}
+
+/* Scroll trigger steps inside sticky zone */
+.scroll-hold-zone .step {
+	height: 100vh;
+}
+
+/* Step 3 scrolls normally */
+/* .step[data-step="3"] {
+	min-height: 100vh;
+	padding: 16rem 1rem;
+	background-color: magenta;
+} */
+
+.image-wrapper {
+	position: sticky;
+	top: 10rem; /* match your sticky layout */
+	width: 100%;
+	max-width: 1000px;
+	height: auto;
+	aspect-ratio: 4/2;
+	margin: 0 auto;
+	overflow: hidden;
+	z-index: 1;
+	overflow: visible; /* change this from 'hidden' temporarily */
+}
+
+
+
+.scroll-image {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	opacity: 0;
+	transition: opacity 1s ease-in-out;
+	pointer-events: none;
+}
+
+.scroll-image.show {
+	opacity: 1;
+	z-index: 2;
+}
+
+.image-a.scroll-image {
+	font-family: Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.scroll-image.show {
+	font-family: Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.full-screen-image-section {
+	width: 100%;
+	height: 100vh;
+	overflow: hidden;
+	position: relative;
+}
+
+.full-screen-image-section img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.scroll-section.dark-section {
+	background-color: black;
+	color: white;
+	padding: 4rem 1rem;
+}
+
+.scroll-section.dark-section .step {
+	background-color: transparent;
+	color: white;
+}
+
+
+.full-screen-image-section {
+	width: 100%;
+	height: 100vh;
+	overflow: hidden;
+	position: relative;
+}
+
+.full-screen-image-section img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.scroll-section.dark-section {
+	background-color: black;
+	color: white;
+	padding: 4rem 1rem;
+}
+
+.scroll-section.dark-section .step {
+	background-color: transparent;
+	color: white;
+}
+
+.step.fullscreen-image {
+	z-index: 10;
+	position: relative;
+	width: 100vw !important;
+	height: 100vh !important;
+	max-width: none !important;
+	min-height: 100vh !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
+  }
+  
+  
+  .step.fullscreen-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	
+  }
+
+  .spacer {
+	height: 15vh;
+	background: transparent;
+  }
+  
+  .step[data-step="4"] {
+	position: relative;
+	z-index: 1;
+  }
+
+  .step[data-step="4"].is-active ~ .step.fullscreen-image {
+	opacity: 1;
+  }
+  
+  .step.fullscreen-image {
+	opacity: 0.3;
+	transition: opacity 0.4s ease;
+  }
+  .step.fullscreen-image.is-active {
+	opacity: 1;
+  }
+  
+  .fullscreen-block {
+	position: relative;
+	z-index: 10;
+  }
+  
+  .fullscreen-block .step.fullscreen-image {
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 0;
+	padding: 0;
+	background-color: black;
+	z-index: 10;
+	position: relative;
+	overflow: hidden;
+  }
+  
+  .fullscreen-block .step.fullscreen-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+  }
+  
+  .fullscreen-block .step[data-step="6"] {
+	position: relative;
+	z-index: 5;
+	background-color: white; /* or your default */
+  }
+
+  /* When Step 5 is active, hide Step 4 */
+.step.fullscreen-image.is-active ~ .step[data-step="4"] {
+	display: none;
+  }
+  
+  .dark-step {
+	background-color: black;
+	color: white;
+  }
+
+  .dark-background-section {
+	background-color: black;
+	color: white;
+	padding: 4rem 0;
+  }
+
+  #data-chart {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: none;
+	background-color: black;
+	z-index: 2;
+  }
+  
+  #data-chart.show {
+	display: block;
+  }
+  
+
+  path.domain{
+	stroke: white;
+
+  }
+
+  .tick text {
+	stroke: white;
+  }
+  
+
+  .step:last-child {
+	margin-bottom: 200px;
+  }
+
+  .chart-wrapper {
+	width: 100%;
+	height: 500px;
+	margin: auto;
+  }
+  
+  .button-row {
+	display: flex;
+	justify-content: center;
+	gap: 0.5rem;
+	margin-top: 1rem;
+  }
+  
+  .button-row button {
+	padding: 0.5rem 1rem;
+	font-size: 1rem;
+	border-radius: 2rem;
+	border: 2px solid white;
+	background-color: black;
+	color: white;
+	cursor: pointer;
+  }
+  
+  .button-row button.active {
+	background-color: white;
+	color: black;
+  }
+
+  #year-buttons {
+	display: none;
+  }
+  
+  #year-buttons.show {
+	display: flex;
+  }
+
+  body {
+	/* font-family: sans-serif; */
+	background-color: black;
+	color: white;
+	margin: 0;
+	padding: 0;
+  }
+
+  svg {
+	background-color: black;
+  }
+
+  .tick-line {
+	stroke: #666;
+	stroke-width: 1px;
+	stroke-dasharray: 4;
+  }
+
+  .circle-solid, .circle-outline {
+	cursor: pointer;
+  }
+
+  .circle-solid {
+	fill: red;
+	opacity: 0.6;
+  }
+
+  .circle-outline {
+	fill: none;
+	stroke: red;
+	stroke-width: 1.5px;
+	cursor: pointer;
+  }
+
+  .month-label, .y-label {
+	fill: white;
+	font-size: 12px;
+  }
+
+  .tooltip {
+	position: absolute;
+	background: black;
+	border: 1px solid white;
+	color: white;
+	padding: 6px 10px;
+	font-size: 12px;
+	pointer-events: none;
+	border-radius: 4px;
+  }
+
+  .button-container {
+	  width: 1000px; /* total SVG width */
+	  margin: 0 auto;
+	  position: relative;
+	  margin-top: 20px;
+  }
+
+  .year-button {
+	width: 48px;
+	height: 48px;
+	border-radius: 24px;
+	border: 2px solid white;
+	background-color: white;
+	color: black;
+	font-weight: bold;
+	text-align: center;
+	margin: 0 20px;
+	cursor: pointer;
+	top: -14px;
+	position: relative;
+  }
+
+  .year-button.selected {
+	background-color: transparent;
+	color: white;
+	border: 2px solid white;
+  }
+
+  .legend {
+	font-size: 14px;
+	fill: white;
+  }
+
+  #cyclone-chart-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	gap: 20px;
+	height: 700px; /* or auto if dynamic content grows */
+	z-index: 3;
+	position: relative;
+  }
+  
+  
+  
+  
+  
